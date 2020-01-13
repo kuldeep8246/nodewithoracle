@@ -24,7 +24,10 @@ var connAttrs = {
   connectString : "xe"
 }
 
+app.post('/userProfiles', function (req, res) {
 
+    oracledb.c
+})
 /*
 
 // Http method: POST
