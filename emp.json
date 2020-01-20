@@ -1,9 +1,13 @@
 { 
-    "username": "kuldeep",
-    "company": "awc",
-    "email": "Sara",
-    "age": 23,
-    "gender": "Male",
-    "department": "History",
-    "car": "Honda"
+    "users":
+    [{
+    "name": "kuldeep",
+    "pass":"kuldeep"
+    },
+    {
+        "name": "ram",
+        "pass":"ram"
+        }
+    
+    ]
 }

@@ -20,12 +20,41 @@ var connAttrs = {
   connectString : "xe"
 }
 
+var auth = require('basic-auth');
+const fs = require('fs');
+var rawdata = fs.readFileSync('emp.json');
+var student = JSON.parse(rawdata);
+console.log(student);
+//CHECK AUTHENTICATION OF USER
+function checkUser (name, pass){
+  for(var i=0;i<student.users.length;i++)
+  {
+    if (student.users[i].name==name && student.users[i].pass==pass)
+    {   
+        console.log(student.users[i].name+" Exists");
+        return true;
+    }
+  }
+      console.log("Check Username and Password")
+      return false;
+}
 // Http Method: GET
 // URI        : /getapi
 // Read all the user profiles
 app.get('/getapidata', function (req, res) {
     "use strict";
   
+    var credentials = auth(req)
+    const vname = credentials.name;
+    const vpwd = credentials.pass;
+
+    console.log("NAME "+vname);
+    console.log(vpwd);
+
+    var userAuth = checkUser(vname,vpwd);
+
+  console.log("hello "+userAuth);
+  if(userAuth){
     oracledb.getConnection(connAttrs, function (err, connection) {
        
         connection.execute("SELECT * FROM emp1", {}, {
@@ -34,9 +63,13 @@ app.get('/getapidata', function (req, res) {
             if (err) {
                 throw err
               }
-              res.status(200).json(result.rows)     
+              res.status(200).json(result.rows)   
+                
         });
     });
+  }else{
+    res.status(403).send('WRONG CREDENTIALS');
+  }
   });
 
 
@@ -144,7 +177,7 @@ app.delete('/deleteapi/:id', function (req, res) {
 
 
    // server
- var server = app.listen(6000, function () {  
+ var server = app.listen(7000, function () {  
   var host = server.address().address  
     var port = server.address().port  
     console.log("Example app listening at http://%s:%s", host, port)  

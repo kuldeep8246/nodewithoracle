@@ -3,6 +3,7 @@ var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
 var oracledb = require('oracledb');
+var connection;
 
 // Use body parser to parse JSON body
 app.use(bodyParser.json());
@@ -20,23 +21,23 @@ var connAttrs = {
   connectString : "xe"
 }
 
+ connection=oracledb.getConnection(connAttrs, function (err, connection) {
+    if (err) {
+        console.log("connected err");
+        return;
+    }else{
+        return connection;
+        console.log("connected oracle");
+    }
+});
+
 // Http Method: GET
 // URI        : /user_profiles
 // Read all the user profiles
 app.get('/user_profiles', function (req, res) {
   "use strict";
 
-  oracledb.getConnection(connAttrs, function (err, connection) {
-      if (err) {
-          // Error connecting to DB
-          res.set('Content-Type', 'application/json');
-          res.status(500).send(JSON.stringify({
-              status: 500,
-              message: "Error connecting to DB",
-              detailed_message: err.message
-          }));
-          return;
-      }
+  
 
       connection.execute("SELECT * FROM emp1", {}, {
           outFormat: oracledb.OBJECT // Return the result as Object
@@ -62,7 +63,7 @@ app.get('/user_profiles', function (req, res) {
                   }
               });
       });
-  });
+  
 });
 
 
@@ -284,7 +285,7 @@ app.delete('/user_profiles/:id', function (req, res) {
 });
 
  // server
- var server = app.listen(6000, function () {  
+ var server = app.listen(7000, function () {  
   
   var host = server.address().address  
   var port = server.address().port  
